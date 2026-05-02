@@ -25,7 +25,10 @@ export type ExperienceItem = {
   endDate?: string;
 };
 
-export type ProfileWithParsedFields = Omit<Profile, "socials" | "education" | "experience"> & {
+export type ProfileWithParsedFields = Omit<
+  Profile,
+  "socials" | "education" | "experience"
+> & {
   socials: Socials;
   education: EducationItem[];
   experience: ExperienceItem[];
@@ -41,42 +44,60 @@ function safeJsonParse<T>(value: unknown, fallback: T): T {
   }
 }
 
+export type ProjectWithParsedFields = Omit<Project, "images"> & {
+  images: string[];
+};
+
 // ============================================
 // Projects
 // ============================================
 
-export async function getProjects(): Promise<Project[]> {
+export async function getProjects(): Promise<ProjectWithParsedFields[]> {
   try {
     const projects = await prisma.project.findMany({
       orderBy: { createdAt: "desc" },
     });
-    return projects;
+    return projects.map((p) => ({
+      ...p,
+      images: safeJsonParse<string[]>(p.images, []),
+    }));
   } catch (error) {
     console.error("Failed to fetch projects:", error);
     return [];
   }
 }
 
-export async function getFeaturedProjects(limit: number = 2): Promise<Project[]> {
+export async function getFeaturedProjects(
+  limit: number = 2,
+): Promise<ProjectWithParsedFields[]> {
   try {
     const projects = await prisma.project.findMany({
       where: { featured: true },
       orderBy: { createdAt: "desc" },
       take: limit,
     });
-    return projects;
+    return projects.map((p) => ({
+      ...p,
+      images: safeJsonParse<string[]>(p.images, []),
+    }));
   } catch (error) {
     console.error("Failed to fetch featured projects:", error);
     return [];
   }
 }
 
-export async function getProjectById(id: string): Promise<Project | null> {
+export async function getProjectById(
+  id: string,
+): Promise<ProjectWithParsedFields | null> {
   try {
     const project = await prisma.project.findUnique({
       where: { id },
     });
-    return project;
+    if (!project) return null;
+    return {
+      ...project,
+      images: safeJsonParse<string[]>(project.images, []),
+    };
   } catch (error) {
     console.error("Failed to fetch project:", error);
     return null;
@@ -104,9 +125,9 @@ export async function getSkillsByCategory(): Promise<Map<string, Skill[]>> {
     const skills = await prisma.skill.findMany({
       orderBy: { createdAt: "desc" },
     });
-    
+
     const grouped = new Map<string, Skill[]>();
-    
+
     for (const skill of skills) {
       const category = skill.category || "Uncategorized";
       if (!grouped.has(category)) {
@@ -114,7 +135,7 @@ export async function getSkillsByCategory(): Promise<Map<string, Skill[]>> {
       }
       grouped.get(category)!.push(skill);
     }
-    
+
     return grouped;
   } catch (error) {
     console.error("Failed to fetch skills by category:", error);
@@ -129,9 +150,9 @@ export async function getSkillsByCategory(): Promise<Map<string, Skill[]>> {
 export async function getProfile(): Promise<ProfileWithParsedFields | null> {
   try {
     const profile = await prisma.profile.findFirst();
-    
+
     if (!profile) return null;
-    
+
     return {
       ...profile,
       socials: safeJsonParse<Socials>(profile.socials, {}),
@@ -150,11 +171,13 @@ export async function getProfile(): Promise<ProfileWithParsedFields | null> {
 
 export async function getSiteConfig() {
   const profile = await getProfile();
-  
+
   return {
     name: profile?.name || "Neon Noir",
     title: profile?.name ? `${profile.name} Portfolio` : "Neon Noir Portfolio",
-    description: profile?.bio || "High-fidelity, performance-driven interfaces for visionary brands.",
+    description:
+      profile?.bio ||
+      "High-fidelity, performance-driven interfaces for visionary brands.",
     email: profile?.email || "hello@example.com",
     location: profile?.location || "San Francisco, CA",
     role: profile?.role || "Digital Architect",

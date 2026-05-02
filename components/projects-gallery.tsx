@@ -10,10 +10,10 @@ import {
   itemVariant,
 } from "@/lib/animations";
 import { Plus } from "lucide-react";
-import type { Project } from "@/generated/prisma/client";
+import type { ProjectWithParsedFields } from "@/lib/cms";
 
 interface ProjectsGalleryProps {
-  projects: Project[];
+  projects: ProjectWithParsedFields[];
   socials: {
     github: string;
     linkedin: string;

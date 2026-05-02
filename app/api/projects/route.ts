@@ -10,7 +10,12 @@ export async function GET(request: NextRequest) {
     const projects = await prisma.project.findMany({
       orderBy: { createdAt: "desc" },
     });
-    return NextResponse.json(projects);
+    // Parse images JSON for client consumption
+    const parsedProjects = projects.map((p) => ({
+      ...p,
+      images: p.images ? JSON.parse(p.images) : [],
+    }));
+    return NextResponse.json(parsedProjects);
   } catch {
     return NextResponse.json(
       { error: "Failed to fetch projects" },
@@ -29,6 +34,7 @@ export async function POST(request: NextRequest) {
         title: body.title,
         description: body.description,
         image: body.image ?? "/placeholder.svg",
+        images: body.images ? JSON.stringify(body.images) : null,
         techStack: body.techStack,
         githubUrl: body.githubUrl ?? null,
         demoUrl: body.demoUrl ?? null,

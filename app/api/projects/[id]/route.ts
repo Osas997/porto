@@ -26,7 +26,12 @@ export async function GET(
     if (!project) {
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
-    return NextResponse.json(project);
+    // Parse images JSON for client consumption
+    const parsedProject = {
+      ...project,
+      images: project.images ? JSON.parse(project.images) : [],
+    };
+    return NextResponse.json(parsedProject);
   } catch {
     return NextResponse.json(
       { error: "Failed to fetch project" },
@@ -51,12 +56,15 @@ export async function PATCH(
     }
 
     const nextImage = body.image ?? existing.image;
+    const nextImages =
+      body.images !== undefined ? JSON.stringify(body.images) : existing.images;
     const project = await prisma.project.update({
       where: { id },
       data: {
         title: body.title,
         description: body.description,
         image: nextImage,
+        images: nextImages,
         techStack: body.techStack,
         githubUrl: body.githubUrl ?? null,
         demoUrl: body.demoUrl ?? null,
@@ -71,6 +79,26 @@ export async function PATCH(
       const result = await deleteImage(existing.image);
       if (result.error) {
         console.error("Failed to delete previous project image:", result.error);
+      }
+    }
+
+    // Delete removed showcase images from storage
+    const oldImages: string[] = existing.images
+      ? JSON.parse(existing.images)
+      : [];
+    const newImages: string[] = body.images ?? oldImages;
+    const removedImages = oldImages.filter(
+      (url: string) => !newImages.includes(url),
+    );
+    for (const url of removedImages) {
+      if (shouldDeleteProjectImage(url)) {
+        const result = await deleteImage(url);
+        if (result.error) {
+          console.error(
+            "Failed to delete removed showcase image:",
+            result.error,
+          );
+        }
       }
     }
 
@@ -106,6 +134,19 @@ export async function DELETE(
       const result = await deleteImage(existing.image);
       if (result.error) {
         console.error("Failed to delete project image:", result.error);
+      }
+    }
+
+    // Delete showcase images from storage
+    const showcaseImages: string[] = existing.images
+      ? JSON.parse(existing.images)
+      : [];
+    for (const url of showcaseImages) {
+      if (shouldDeleteProjectImage(url)) {
+        const result = await deleteImage(url);
+        if (result.error) {
+          console.error("Failed to delete showcase image:", result.error);
+        }
       }
     }
 

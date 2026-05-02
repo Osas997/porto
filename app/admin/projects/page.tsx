@@ -28,19 +28,17 @@ import {
 } from "@/components/ui/dialog"
 import { PlusIcon, MoreHorizontalIcon, PencilIcon, TrashIcon, LoaderIcon } from "lucide-react"
 import { toast } from "sonner"
-import type { Project } from "@/generated/prisma/client"
-
-import { useProjects, useDeleteProject } from "@/hooks/use-projects"
+import { useProjects, useDeleteProject, type ProjectInput } from "@/hooks/use-projects"
 import { ProjectFormModal } from "@/components/project-form-modal"
 
 export default function ProjectsPage() {
   const { data: projects, isLoading } = useProjects()
   const deleteProject = useDeleteProject()
   const [formOpen, setFormOpen] = useState(false)
-  const [editingProject, setEditingProject] = useState<Project | null>(null)
+  const [editingProject, setEditingProject] = useState<ProjectInput | null>(null)
   const [deleteId, setDeleteId] = useState<string | null>(null)
 
-  const handleEdit = (project: Project) => {
+  const handleEdit = (project: ProjectInput) => {
     setEditingProject(project)
     setFormOpen(true)
   }
@@ -85,6 +83,7 @@ export default function ProjectsPage() {
                 <TableHead className="w-[80px]">Image</TableHead>
                 <TableHead>Title</TableHead>
                 <TableHead>Tech Stack</TableHead>
+                <TableHead className="w-[100px]">Showcase</TableHead>
                 <TableHead>Featured</TableHead>
                 <TableHead className="text-right">Date Created</TableHead>
                 <TableHead className="w-[50px]"></TableHead>
@@ -92,7 +91,7 @@ export default function ProjectsPage() {
             </TableHeader>
             <TableBody>
               <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center">
+                <TableCell colSpan={7} className="h-24 text-center">
                   No projects found.
                 </TableCell>
               </TableRow>
@@ -107,6 +106,7 @@ export default function ProjectsPage() {
                 <TableHead className="w-[80px]">Image</TableHead>
                 <TableHead>Title</TableHead>
                 <TableHead>Tech Stack</TableHead>
+                <TableHead className="w-[100px]">Showcase</TableHead>
                 <TableHead>Featured</TableHead>
                 <TableHead className="text-right">Date Created</TableHead>
                 <TableHead className="w-[50px]"></TableHead>
@@ -127,6 +127,11 @@ export default function ProjectsPage() {
                   </TableCell>
                   <TableCell className="max-w-[200px] truncate">
                     {project.techStack}
+                  </TableCell>
+                  <TableCell>
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-secondary/10 text-secondary">
+                      {project.images?.length ?? 0} images
+                    </span>
                   </TableCell>
                   <TableCell>
                     {project.featured ? "Yes" : "No"}

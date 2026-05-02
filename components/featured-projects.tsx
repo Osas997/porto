@@ -9,10 +9,10 @@ import {
   itemVariant,
 } from "@/lib/animations";
 import { ArrowRight } from "lucide-react";
-import type { Project } from "@/generated/prisma/client";
+import type { ProjectWithParsedFields } from "@/lib/cms";
 
 interface FeaturedProjectsProps {
-  projects: Project[];
+  projects: ProjectWithParsedFields[];
 }
 
 export function FeaturedProjects({ projects }: FeaturedProjectsProps) {

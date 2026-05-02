@@ -6,7 +6,7 @@ import { z } from "zod"
 import { useState, useRef, useEffect } from "react"
 import { ImagePlusIcon, LoaderIcon, XIcon } from "lucide-react"
 import { toast } from "sonner"
-import type { Project } from "@/generated/prisma/client"
+import type { ProjectInput } from "@/hooks/use-projects"
 
 import {
   Dialog,
@@ -28,6 +28,7 @@ const projectSchema = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().min(1, "Description is required"),
   image: z.string(),
+  images: z.array(z.string()),
   techStack: z.string().min(1, "Tech stack is required"),
   githubUrl: z.string().url("Invalid URL").or(z.literal("")).optional(),
   demoUrl: z.string().url("Invalid URL").or(z.literal("")).optional(),
@@ -39,7 +40,7 @@ type ProjectFormValues = z.infer<typeof projectSchema>
 interface ProjectFormModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  project?: Project | null
+  project?: ProjectInput | null
 }
 
 export function ProjectFormModal({
@@ -52,7 +53,12 @@ export function ProjectFormModal({
   const updateProject = useUpdateProject()
   const [uploading, setUploading] = useState(false)
   const [preview, setPreview] = useState<string | null>(project?.image ?? null)
+  const [showcaseImages, setShowcaseImages] = useState<string[]>(
+    project?.images ?? []
+  )
+  const [uploadingShowcase, setUploadingShowcase] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const showcaseInputRef = useRef<HTMLInputElement>(null)
 
   const {
     register,
@@ -67,6 +73,7 @@ export function ProjectFormModal({
       title: project?.title ?? "",
       description: project?.description ?? "",
       image: project?.image ?? "/placeholder.svg",
+      images: project?.images ?? [],
       techStack: project?.techStack ?? "",
       githubUrl: project?.githubUrl ?? "",
       demoUrl: project?.demoUrl ?? "",
@@ -76,16 +83,19 @@ export function ProjectFormModal({
 
   useEffect(() => {
     if (open) {
+      const parsedImages = project?.images ?? []
       reset({
         title: project?.title ?? "",
         description: project?.description ?? "",
         image: project?.image ?? "/placeholder.svg",
+        images: parsedImages,
         techStack: project?.techStack ?? "",
         githubUrl: project?.githubUrl ?? "",
         demoUrl: project?.demoUrl ?? "",
         featured: project?.featured ?? false,
       })
       setPreview(project?.image ?? null)
+      setShowcaseImages(parsedImages)
     }
   }, [open, project, reset])
 
@@ -114,10 +124,42 @@ export function ProjectFormModal({
     }
   }
 
+  const handleShowcaseUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files?.length) return
+
+    setUploadingShowcase(true)
+    try {
+      const newUrls: string[] = []
+      for (const file of Array.from(files)) {
+        const formData = new FormData()
+        formData.append("file", file)
+        const result = await uploadImage(formData)
+        if (result.error) throw new Error(result.error)
+        if (result.url) newUrls.push(result.url)
+      }
+      const updated = [...showcaseImages, ...newUrls]
+      setShowcaseImages(updated)
+      setValue("images", updated)
+      toast.success(`${newUrls.length} image(s) uploaded`)
+    } catch {
+      toast.error("Failed to upload showcase images")
+    } finally {
+      setUploadingShowcase(false)
+    }
+  }
+
+  const removeShowcaseImage = (index: number) => {
+    const updated = showcaseImages.filter((_, i) => i !== index)
+    setShowcaseImages(updated)
+    setValue("images", updated)
+  }
+
   const onSubmit = async (data: ProjectFormValues) => {
     try {
       const payload = {
         ...data,
+        images: showcaseImages,
         githubUrl: data.githubUrl || null,
         demoUrl: data.demoUrl || null,
       }
@@ -132,6 +174,7 @@ export function ProjectFormModal({
 
       reset()
       setPreview(null)
+      setShowcaseImages([])
       onOpenChange(false)
     } catch {
       toast.error(isEdit ? "Failed to update project" : "Failed to create project")
@@ -181,7 +224,7 @@ export function ProjectFormModal({
           </div>
 
           <div className="grid gap-2">
-            <Label>Image</Label>
+            <Label>Thumbnail Image</Label>
             <div className="flex items-center gap-4">
               {preview && preview !== "/placeholder.svg" ? (
                 <div className="relative h-20 w-32 overflow-hidden rounded-md border">
@@ -214,7 +257,7 @@ export function ProjectFormModal({
                 ) : (
                   <ImagePlusIcon className="mr-2 h-4 w-4" />
                 )}
-                {uploading ? "Uploading..." : "Upload Image"}
+                {uploading ? "Uploading..." : "Upload Thumbnail"}
               </Button>
               <input
                 ref={fileInputRef}
@@ -224,6 +267,59 @@ export function ProjectFormModal({
                 onChange={handleImageUpload}
               />
             </div>
+          </div>
+
+          <div className="grid gap-2">
+            <Label>Showcase Images</Label>
+            <p className="text-xs text-muted-foreground">
+              Add multiple images to create a project gallery. These will be displayed on the project detail page.
+            </p>
+            {showcaseImages.length > 0 && (
+              <div className="flex flex-wrap gap-3 mt-2">
+                {showcaseImages.map((url, idx) => (
+                  <div key={idx} className="relative h-20 w-32 overflow-hidden rounded-md border group">
+                    <img
+                      src={url}
+                      alt={`Showcase ${idx + 1}`}
+                      className="h-full w-full object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeShowcaseImage(idx)}
+                      className="absolute top-1 right-1 rounded-full bg-black/50 p-0.5 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <XIcon className="h-3 w-3" />
+                    </button>
+                    <div className="absolute bottom-1 left-1 px-1.5 py-0.5 rounded bg-black/50 text-white text-[10px] font-bold">
+                      {idx + 1}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={uploadingShowcase}
+              onClick={() => showcaseInputRef.current?.click()}
+              className="mt-2"
+            >
+              {uploadingShowcase ? (
+                <LoaderIcon className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <ImagePlusIcon className="mr-2 h-4 w-4" />
+              )}
+              {uploadingShowcase ? "Uploading..." : "Add Showcase Images"}
+            </Button>
+            <input
+              ref={showcaseInputRef}
+              type="file"
+              accept="image/*"
+              multiple
+              className="hidden"
+              onChange={handleShowcaseUpload}
+            />
           </div>
 
           <div className="grid gap-2">

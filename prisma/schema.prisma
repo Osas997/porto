@@ -21,6 +21,7 @@ model Project {
   title       String
   description String   @db.Text
   image       String   @default("/placeholder.svg")
+  images      String?  @db.Text // JSON array of showcase image URLs
   techStack   String // Store as JSON string or comma-separated for simplicity
   githubUrl   String?
   demoUrl     String?
