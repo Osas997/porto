@@ -41,7 +41,7 @@ export function ContactContent({ email, location, socials }: ContactContentProps
   }, [state.status, state.submittedAt]);
 
   return (
-    <div className="flex-grow pt-32 pb-[120px] px-[5vw] max-w-[1280px] mx-auto w-full flex flex-col mt-[120px]">
+    <div className="flex-grow pt-[160px] pb-section-gap px-margin-page max-w-[1280px] mx-auto w-full flex flex-col">
       {/* Ambient Background */}
       <div className="fixed inset-0 z-[-1] pointer-events-none">
         <motion.div
