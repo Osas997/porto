@@ -1,5 +1,6 @@
 "use client";
 
+import { useActionState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import {
   heroContainer,
@@ -8,6 +9,12 @@ import {
   fadeInUp,
 } from "@/lib/animations";
 import { Send } from "lucide-react";
+import { submitContactMessage, type ContactFormState } from "@/app/contact/actions";
+
+const initialContactFormState: ContactFormState = {
+  status: "idle",
+  message: "",
+};
 
 interface ContactContentProps {
   email: string;
@@ -21,6 +28,18 @@ interface ContactContentProps {
 }
 
 export function ContactContent({ email, location, socials }: ContactContentProps) {
+  const formRef = useRef<HTMLFormElement>(null);
+  const [state, formAction, pending] = useActionState(
+    submitContactMessage,
+    initialContactFormState,
+  );
+
+  useEffect(() => {
+    if (state.status === "success" && state.submittedAt) {
+      formRef.current?.reset();
+    }
+  }, [state.status, state.submittedAt]);
+
   return (
     <div className="flex-grow pt-32 pb-[120px] px-[5vw] max-w-[1280px] mx-auto w-full flex flex-col mt-[120px]">
       {/* Ambient Background */}
@@ -86,7 +105,7 @@ export function ContactContent({ email, location, socials }: ContactContentProps
               </h3>
               <a
                 href={`mailto:${email}`}
-                className="font-[Inter] text-2xl font-semibold text-on-surface hover:text-tertiary transition-colors duration-300"
+                className="font-[Inter] text-lg md:text-xl font-semibold text-on-surface hover:text-tertiary transition-colors duration-300"
               >
                 {email}
               </a>
@@ -121,11 +140,6 @@ export function ContactContent({ email, location, socials }: ContactContentProps
                   href: socials.github,
                 },
                 {
-                  icon: "alternate_email",
-                  color: "secondary",
-                  href: socials.twitter,
-                },
-                {
                   icon: "photo_camera",
                   color: "tertiary",
                   href: socials.instagram,
@@ -154,7 +168,11 @@ export function ContactContent({ email, location, socials }: ContactContentProps
           variants={fadeInUp}
           className="lg:col-span-7 glass-panel-strong rounded-xl p-12"
         >
-          <form className="space-y-8 flex flex-col h-full">
+          <form
+            ref={formRef}
+            action={formAction}
+            className="space-y-8 flex flex-col h-full"
+          >
             {/* Name */}
             <div className="relative group">
               <label
@@ -166,25 +184,42 @@ export function ContactContent({ email, location, socials }: ContactContentProps
               <input
                 type="text"
                 id="name"
+                name="name"
                 placeholder="Name or Alias"
+                required
+                minLength={2}
+                maxLength={80}
                 className="w-full bg-transparent border-0 border-b border-outline-variant/40 py-3 px-0 text-on-surface font-[Inter] text-base focus:ring-0 focus:border-tertiary placeholder:text-on-surface-variant/50 transition-colors duration-300"
               />
+              {state.fieldErrors?.name?.[0] ? (
+                <p className="mt-2 text-sm text-destructive">
+                  {state.fieldErrors.name[0]}
+                </p>
+              ) : null}
             </div>
 
             {/* Email */}
-            <div className="relative group mt-8">
+            <div className="relative group">
               <label
                 htmlFor="email"
                 className="font-[Space_Grotesk] text-xs font-bold tracking-[0.1em] text-on-surface-variant uppercase absolute -top-2 left-0 text-[10px] opacity-0 group-focus-within:opacity-100 group-focus-within:-top-4 transition-all duration-300"
               >
-                Return Address
+                Reply Channel
               </label>
               <input
                 type="email"
                 id="email"
-                placeholder="Secure Email"
+                name="email"
+                placeholder="you@example.com"
+                required
+                maxLength={120}
                 className="w-full bg-transparent border-0 border-b border-outline-variant/40 py-3 px-0 text-on-surface font-[Inter] text-base focus:ring-0 focus:border-tertiary placeholder:text-on-surface-variant/50 transition-colors duration-300"
               />
+              {state.fieldErrors?.email?.[0] ? (
+                <p className="mt-2 text-sm text-destructive">
+                  {state.fieldErrors.email[0]}
+                </p>
+              ) : null}
             </div>
 
             {/* Message */}
@@ -197,20 +232,42 @@ export function ContactContent({ email, location, socials }: ContactContentProps
               </label>
               <textarea
                 id="message"
+                name="message"
                 placeholder="Message Protocol..."
                 rows={4}
+                required
+                minLength={10}
+                maxLength={2000}
                 className="w-full bg-surface-container-lowest/50 border border-outline-variant/30 rounded-lg p-4 mt-2 text-on-surface font-[Inter] text-base focus:ring-0 focus:border-secondary focus:bg-surface-container-low/50 placeholder:text-on-surface-variant/40 transition-all duration-300 resize-none h-40"
               />
+              {state.fieldErrors?.message?.[0] ? (
+                <p className="mt-2 text-sm text-destructive">
+                  {state.fieldErrors.message[0]}
+                </p>
+              ) : null}
             </div>
 
             {/* Submit */}
+            {state.message ? (
+              <p
+                aria-live="polite"
+                className={`text-sm ${
+                  state.status === "success"
+                    ? "text-green-400"
+                    : "text-destructive"
+                }`}
+              >
+                {state.message}
+              </p>
+            ) : null}
             <motion.button
-              type="button"
+              type="submit"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
+              disabled={pending}
               className="mt-8 w-full bg-gradient-to-r from-secondary to-tertiary text-on-secondary font-[Space_Grotesk] text-xs font-bold tracking-[0.1em] uppercase py-4 px-8 rounded-full hover:shadow-[0_0_40px_rgba(221,183,255,0.25)] transition-all duration-300 flex items-center justify-center gap-2 group border border-outline-variant/20"
             >
-              TRANSMIT SIGNAL
+              {pending ? "TRANSMITTING..." : "TRANSMIT SIGNAL"}
               <Send
                 size={14}
                 className="group-hover:translate-x-1 transition-transform"

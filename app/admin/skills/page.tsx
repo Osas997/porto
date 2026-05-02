@@ -33,7 +33,6 @@ import {
 
 import { useDeleteSkill, useSkills } from "@/hooks/use-skills"
 import { SkillFormModal } from "@/components/skill-form-modal"
-import { deleteImage } from "@/lib/upload"
 
 export default function SkillsPage() {
   const { data: skills, isLoading } = useSkills()
@@ -54,13 +53,8 @@ export default function SkillsPage() {
   }
 
   const handleDelete = async () => {
-    if (!deleteId || !skills) return
+    if (!deleteId) return
     try {
-      const skillToDelete = skills.find((s) => s.id === deleteId)
-      if (skillToDelete?.logo) {
-        await deleteImage(skillToDelete.logo)
-      }
-
       await deleteSkill.mutateAsync(deleteId)
       toast.success("Skill deleted")
     } catch {

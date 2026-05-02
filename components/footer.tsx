@@ -9,18 +9,16 @@ interface FooterProps {
   siteName: string;
   socials: {
     github?: string;
+    instagram?: string;
     linkedin?: string;
-    twitter?: string;
-    dribbble?: string;
   };
 }
 
 export default function Footer({ siteName, socials }: FooterProps) {
   const footerLinks = [
     { label: "Github", href: socials.github || "https://github.com" },
-    { label: "LinkedIn", href: socials.linkedin || "https://linkedin.com" },
-    { label: "Dribbble", href: socials.dribbble || "https://dribbble.com" },
-    { label: "Twitter", href: socials.twitter || "https://twitter.com" },
+    { label: "Instagram", href: socials.instagram || "https://instagram.com" },
+    { label: "Linked In", href: socials.linkedin || "https://linkedin.com" },
   ].filter(link => link.href);
   const pathname = usePathname();
 
@@ -64,8 +62,7 @@ export default function Footer({ siteName, socials }: FooterProps) {
           variants={fadeInUp}
           className="font-[Inter] text-sm text-on-surface-variant/60"
         >
-          © {new Date().getFullYear()} {siteName} Portfolio. Built for
-          the future.
+          © {new Date().getFullYear()} {siteName} Portfolio.
         </motion.p>
       </div>
     </motion.footer>

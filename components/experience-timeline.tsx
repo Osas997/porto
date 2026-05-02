@@ -21,7 +21,7 @@ export function ExperienceTimeline({ experiences }: ExperienceTimelineProps) {
         viewport={{ once: true, amount: 0.2 }}
       >
         <h2 className="font-[Inter] text-[clamp(32px,4vw,48px)] font-bold leading-[1.2] tracking-[-0.02em] text-on-surface mb-12">
-          The Journey
+          Experience
         </h2>
         <div className="glass-panel rounded-xl p-12 text-center">
           <p className="text-on-surface-variant">No experience entries yet.</p>
@@ -50,7 +50,7 @@ export function ExperienceTimeline({ experiences }: ExperienceTimelineProps) {
         variants={fadeInUp}
         className="font-[Inter] text-[clamp(32px,4vw,48px)] font-bold leading-[1.2] tracking-[-0.02em] text-on-surface mb-12"
       >
-        The Journey
+        Experience
       </motion.h2>
 
       <div className="space-y-6">

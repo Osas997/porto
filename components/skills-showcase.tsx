@@ -53,7 +53,7 @@ export function SkillsShowcase({ skills }: SkillsShowcaseProps) {
         className="mb-[120px]"
       >
         <h2 className="font-[Inter] text-[clamp(32px,4vw,48px)] font-bold leading-[1.2] tracking-[-0.02em] text-on-surface mb-12">
-          Technical Arsenal
+          Technical Skills
         </h2>
         <div className="glass-panel rounded-xl p-12 text-center">
           <p className="text-on-surface-variant">No skills added yet.</p>
@@ -76,7 +76,7 @@ export function SkillsShowcase({ skills }: SkillsShowcaseProps) {
         variants={fadeInUp}
         className="font-[Inter] text-[clamp(32px,4vw,48px)] font-bold leading-[1.2] tracking-[-0.02em] text-on-surface mb-12"
       >
-        Technical Arsenal
+        Technical Skills
       </motion.h2>
 
       <div className="space-y-8">

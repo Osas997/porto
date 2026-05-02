@@ -22,7 +22,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { useCreateProject, useUpdateProject } from "@/hooks/use-projects"
-import { uploadImage, deleteImage } from "@/lib/upload"
+import { uploadImage } from "@/lib/upload"
 
 const projectSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -116,11 +116,6 @@ export function ProjectFormModal({
 
   const onSubmit = async (data: ProjectFormValues) => {
     try {
-      // Delete old image if changed during edit
-      if (isEdit && project && project.image !== data.image && project.image !== "/placeholder.svg") {
-        await deleteImage(project.image)
-      }
-
       const payload = {
         ...data,
         githubUrl: data.githubUrl || null,

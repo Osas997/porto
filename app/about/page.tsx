@@ -3,6 +3,28 @@ import { AboutHero } from "@/components/about-hero";
 import { SkillsShowcase } from "@/components/skills-showcase";
 import { ExperienceTimeline } from "@/components/experience-timeline";
 import { EducationTimeline } from "@/components/education-timeline";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "About",
+  description:
+    "High-fidelity, performance-driven interfaces for visionary brands. Bridging cinematic design and robust engineering.",
+  keywords: [
+    "about",
+    "web developer",
+    "backend developer",
+    "express",
+    "nextjs",
+    "laravel",
+  ],
+  openGraph: {
+    title: "About",
+    description:
+      "Building the future of digital experiences with technological elegance.",
+    type: "website",
+  },
+};
+
 
 export default async function AboutPage() {
   // Fetch data from CMS on the server

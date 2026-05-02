@@ -33,21 +33,21 @@ const publicSans = Public_Sans({
 
 export const metadata: Metadata = {
   title: {
-    default: "Neon Noir Portfolio | Digital Architect",
-    template: "%s | Neon Noir Portfolio",
+    default: "Muhammad Ariq Alfarizi | Portfolio",
+    template: "Muhammad Ariq Alfarizi - %s",
   },
   description:
     "High-fidelity, performance-driven interfaces for visionary brands. Bridging cinematic design and robust engineering.",
   keywords: [
     "portfolio",
     "web developer",
-    "frontend",
-    "react",
+    "backend developer",
+    "express",
     "nextjs",
-    "design engineer",
+    "laravel",
   ],
   openGraph: {
-    title: "Neon Noir Portfolio",
+    title: "Muhammad Ariq Alfarizi - Portfolio",
     description:
       "Building the future of digital experiences with technological elegance.",
     type: "website",

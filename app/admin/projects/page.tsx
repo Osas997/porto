@@ -32,7 +32,6 @@ import type { Project } from "@/generated/prisma/client"
 
 import { useProjects, useDeleteProject } from "@/hooks/use-projects"
 import { ProjectFormModal } from "@/components/project-form-modal"
-import { deleteImage } from "@/lib/upload"
 
 export default function ProjectsPage() {
   const { data: projects, isLoading } = useProjects()
@@ -52,14 +51,8 @@ export default function ProjectsPage() {
   }
 
   const handleDelete = async () => {
-    if (!deleteId || !projects) return
+    if (!deleteId) return
     try {
-      // Find project to get image URL
-      const projectToDelete = projects.find((p) => p.id === deleteId)
-      if (projectToDelete && projectToDelete.image !== "/placeholder.svg") {
-        await deleteImage(projectToDelete.image)
-      }
-
       await deleteProject.mutateAsync(deleteId)
       toast.success("Project deleted")
     } catch {

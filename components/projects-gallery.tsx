@@ -14,9 +14,14 @@ import type { Project } from "@/generated/prisma/client";
 
 interface ProjectsGalleryProps {
   projects: Project[];
+  socials: {
+    github: string;
+    linkedin: string;
+    twitter: string;
+  };
 }
 
-export function ProjectsGallery({ projects }: ProjectsGalleryProps) {
+export function ProjectsGallery({ projects, socials }: ProjectsGalleryProps) {
   if (projects.length === 0) {
     return (
       <div className="text-center py-24">
@@ -33,6 +38,9 @@ export function ProjectsGallery({ projects }: ProjectsGalleryProps) {
     }
     if (tech.includes("fintech") || tech.includes("finance")) {
       return { color: "tertiary", label: "Fintech" };
+    }
+    if (tech.includes("ai") || tech.includes("artificial intelligence")) {
+      return { color: "tertiary", label: "AI" };
     }
     if (tech.includes("e-commerce") || tech.includes("shop")) {
       return { color: "secondary", label: "E-Commerce" };
@@ -157,7 +165,7 @@ export function ProjectsGallery({ projects }: ProjectsGalleryProps) {
           className="lg:col-span-6 row-span-1 glass-panel rounded-xl overflow-hidden group cursor-pointer hover:border-secondary/50 transition-all duration-300 relative flex flex-col justify-center items-center text-center p-12 border-dashed border-2 border-outline-variant/30"
         >
           <a
-            href="https://github.com"
+            href={socials.github}
             target="_blank"
             rel="noopener noreferrer"
             className="absolute inset-0 z-10"

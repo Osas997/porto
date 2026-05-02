@@ -20,7 +20,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useCreateSkill, useUpdateSkill } from "@/hooks/use-skills"
-import { uploadImage, deleteImage } from "@/lib/upload"
+import { uploadImage } from "@/lib/upload"
 
 const skillSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -94,10 +94,6 @@ export function SkillFormModal({ open, onOpenChange, skill }: SkillFormModalProp
 
   const onSubmit = async (data: SkillFormValues) => {
     try {
-      if (isEdit && skill && skill.logo && skill.logo !== data.logo) {
-        await deleteImage(skill.logo)
-      }
-
       if (isEdit && skill) {
         await updateSkill.mutateAsync({ id: skill.id, ...data })
         toast.success("Skill updated")

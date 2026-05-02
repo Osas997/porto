@@ -39,17 +39,16 @@ export function AboutHero({ name, role, bio, avatar, location, email, socials }:
         >
           <span className="w-2 h-2 rounded-full bg-secondary animate-pulse" />
           <span className="font-[Space_Grotesk] text-xs font-bold tracking-[0.1em] text-secondary uppercase">
-            Identity
+            {role}
           </span>
         </motion.div>
 
         <motion.h1
           variants={heroItem}
-          className="font-[Inter] text-[clamp(40px,6vw,64px)] font-extrabold leading-[1.1] tracking-[-0.04em] text-on-surface"
+          className="font-[Inter] text-[clamp(32px,6vw,48px)] font-extrabold leading-[1.1] tracking-[-0.04em] text-on-surface"
         >
-          Architect of
+          {name}
           <br />
-          <span className="text-gradient">Digital Realms.</span>
         </motion.h1>
 
         <motion.p
@@ -126,7 +125,7 @@ export function AboutHero({ name, role, bio, avatar, location, email, socials }:
             src={avatar || "https://lh3.googleusercontent.com/aida-public/AB6AXuBnUQeCsmGSQVLsMoFEfnWC0BnZ5NqXvX_B--G6g7C52VS1Rwmbyh3AcFwCPSb_nVMtwbALLnVZYsvbDu1J9EHG7lh4hJpRwJJEPFR3Cpk2Oneb054l_Ood5YR6UGuFsfAHF2k_NML47omUXGMmjzvvvg3uqeTlTJwA1xB7tkvQ6KBSBAldAKzQtQ2RA9rsBnunl7lYL_XHEEZvLiGUjHK5ixk5EpIbKj1JaK1FIm8DHnjZO58EQDync_SkM1jKj3pfOupDJZg01SA"}
             alt={name}
             fill
-            className="object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 mix-blend-luminosity hover:mix-blend-normal"
+            className="object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 hover:mix-blend-normal"
             priority
           />
           <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-80" />
