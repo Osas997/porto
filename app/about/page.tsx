@@ -5,6 +5,8 @@ import { ExperienceTimeline } from "@/components/experience-timeline";
 import { EducationTimeline } from "@/components/education-timeline";
 import type { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "About",
   description:

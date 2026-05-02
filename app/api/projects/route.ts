@@ -1,5 +1,6 @@
 import { requireAuth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -34,6 +35,9 @@ export async function POST(request: NextRequest) {
         featured: body.featured ?? false,
       },
     });
+    revalidatePath("/");
+    revalidatePath("/projects");
+    revalidatePath("/projects/[id]", "page");
     return NextResponse.json(project, { status: 201 });
   } catch {
     return NextResponse.json(

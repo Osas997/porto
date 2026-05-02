@@ -1,6 +1,7 @@
 import { requireAuth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { deleteImage } from "@/lib/upload";
+import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
 function shouldDeleteSkillLogo(url: string | null | undefined) {
@@ -60,6 +61,7 @@ export async function PATCH(
       }
     }
 
+    revalidatePath("/about");
     return NextResponse.json(skill);
   } catch {
     return NextResponse.json(
@@ -92,6 +94,7 @@ export async function DELETE(
       }
     }
 
+    revalidatePath("/about");
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json(

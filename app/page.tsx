@@ -2,6 +2,8 @@ import { getFeaturedProjects, getSiteConfig } from "@/lib/cms";
 import { HomeHero } from "@/components/home-hero";
 import { FeaturedProjects } from "@/components/featured-projects";
 
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
   // Fetch data from CMS on the server
   const [featuredProjects, siteConfig] = await Promise.all([

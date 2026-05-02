@@ -1,6 +1,7 @@
 import { requireAuth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { deleteImage } from "@/lib/upload";
+import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
 const DEFAULT_PROFILE_AVATAR = "/images/avatar.jpg";
@@ -94,10 +95,16 @@ export async function POST(request: NextRequest) {
         }
       }
 
+      revalidatePath("/");
+      revalidatePath("/about");
+      revalidatePath("/contact");
       return NextResponse.json(updated);
     }
 
     const created = await prisma.profile.create({ data });
+    revalidatePath("/");
+    revalidatePath("/about");
+    revalidatePath("/contact");
     return NextResponse.json(created, { status: 201 });
   } catch {
     return NextResponse.json(
@@ -126,6 +133,9 @@ export async function DELETE(request: NextRequest) {
       }
     }
 
+    revalidatePath("/");
+    revalidatePath("/about");
+    revalidatePath("/contact");
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json(

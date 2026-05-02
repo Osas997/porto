@@ -2,6 +2,8 @@ import { getProjects, getSiteConfig } from "@/lib/cms";
 import { ProjectsGallery } from "@/components/projects-gallery";
 import type { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Projects",
   description:

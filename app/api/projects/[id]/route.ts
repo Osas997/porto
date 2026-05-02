@@ -1,6 +1,7 @@
 import { requireAuth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { deleteImage } from "@/lib/upload";
+import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
 const DEFAULT_PROJECT_IMAGE = "/placeholder.svg";
@@ -73,6 +74,9 @@ export async function PATCH(
       }
     }
 
+    revalidatePath("/");
+    revalidatePath("/projects");
+    revalidatePath("/projects/[id]", "page");
     return NextResponse.json(project);
   } catch {
     return NextResponse.json(
@@ -105,6 +109,9 @@ export async function DELETE(
       }
     }
 
+    revalidatePath("/");
+    revalidatePath("/projects");
+    revalidatePath("/projects/[id]", "page");
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json(
