@@ -108,7 +108,7 @@ export default function Navbar({ siteName, email, socials }: NavbarProps) {
             <Code2 size={18} />
           </a>
           <Link
-            href="/contact"
+            href="/resume/resume.pdf"
             className="bg-gradient-to-r from-secondary to-tertiary text-on-secondary px-4 py-2 rounded-full font-[Space_Grotesk] uppercase tracking-widest text-xs font-bold hover:shadow-[0_0_20px_rgba(192,193,255,0.4)] transition-all duration-300 active:scale-95"
           >
             Resume
