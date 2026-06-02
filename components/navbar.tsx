@@ -45,7 +45,7 @@ export default function Navbar({ siteName, email, socials }: NavbarProps) {
       className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center py-3 pointer-events-none"
     >
       <motion.div
-        className={`pointer-events-auto rounded-full mt-6 mx-auto w-fit px-6 border shadow-[0_0_40px_rgba(59,130,246,0.1)] flex items-center gap-8 py-3 transition-all duration-500 ${
+        className={`pointer-events-auto rounded-full mt-6 mx-auto w-full md:w-fit max-w-[calc(100vw-2rem)] px-4 md:px-6 border shadow-[0_0_40px_rgba(59,130,246,0.1)] flex items-center justify-between md:justify-start gap-4 md:gap-8 py-3 transition-all duration-500 ${
           scrolled
             ? "navbar-glass-scrolled bg-neutral-950/80 backdrop-blur-2xl border-white/15 scale-[0.97]"
             : "navbar-glass bg-neutral-950/70 backdrop-blur-xl border-white/10"
@@ -54,7 +54,7 @@ export default function Navbar({ siteName, email, socials }: NavbarProps) {
         {/* Logo */}
         <Link
           href="/"
-          className="text-xl font-black tracking-tighter theme-text-primary text-white hover:text-secondary transition-colors duration-300"
+          className="text-lg sm:text-xl font-black tracking-tighter theme-text-primary text-white hover:text-secondary transition-colors duration-300 truncate max-w-[180px] sm:max-w-xs md:max-w-none"
         >
           {siteName}
         </Link>

@@ -23,7 +23,7 @@ interface HomeHeroProps {
 
 export function HomeHero({ name, role, bio, latestProject }: HomeHeroProps) {
   return (
-    <section className="relative min-h-screen flex items-center justify-center pt-32 pb-[120px] px-[5vw]">
+    <section className="relative min-h-screen flex items-center justify-center pt-32 pb-[120px] px-[5vw] overflow-hidden">
       {/* Ambient Background Glows */}
       <motion.div
         initial={{ scale: 1, opacity: 0 }}
